@@ -7,19 +7,31 @@ export const getInfo = async (req, res, next) => {
     const SEARCH_URL = `https://sis.ukrpatent.org/api/v1/open-data/${number}/`;
 
     const { data } = await axios.get(SEARCH_URL);
-    const [lan, info] = Object.values(data.data.DE[0]);
+    // const [lan, info] = Object.values(data.data.DE[0]);
+
+    const pattentName = data.data.I_54[0]["I_54.U"];
+    const b = data.data.I_71;
+    const owners = [];
+
+    b.flatMap((el) => {
+      if (el["I_71.N.R"] && !owners.includes(el["I_71.N.R"])) {
+        owners.push(el["I_71.N.R"]);
+      }
+    });
+
+    const strOwners = owners.join(", ");
 
     const sql = `INSERT INTO Patents.patents_info ( type, state, number, address, registration_date, info) VALUES(?, ?, ?, ?, ?, ?);`;
 
     conn.query(
       sql,
       [
-        data.obj_type,
+        pattentName,
         data.obj_state,
         data.app_number,
         data.data.I_98,
         data.data.I_24,
-        info,
+        strOwners,
       ],
       (err, results, field) => {
         if (err) {

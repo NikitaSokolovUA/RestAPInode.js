@@ -17,8 +17,9 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  //   console.log("err:    ", err.message);
-  //   console.log(err.name);
+  console.log(err);
+  console.log("err:    ", err.message);
+  console.log(err.name);
 
   if (err.message === "Request failed with status code 404") {
     res.status(404).json({ message: "not found" });

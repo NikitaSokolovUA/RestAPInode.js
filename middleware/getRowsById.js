@@ -1,6 +1,6 @@
-import { conn } from "../../server.js";
+import { conn } from "../server.js";
 
-export const getRowsById = async (req, res, next) => {
+const getRowsById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -12,13 +12,15 @@ export const getRowsById = async (req, res, next) => {
           res.status(500).json({ error: "Failed to retrieve ID" });
           return;
         } else {
-          req.results = rusults;
-          console.log("type: ", results);
+          req.results = results;
+          // console.log("type: ", results);
+          next();
         }
       }
     );
-    next();
   } catch (error) {
     next(error);
   }
 };
+
+export default getRowsById;
