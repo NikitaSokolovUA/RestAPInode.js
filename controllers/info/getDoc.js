@@ -11,8 +11,6 @@ export const getDoc = async (req, res, next) => {
   try {
     const { type, number, address, registration_date, info } = req.results[0];
 
-    console.log(req.results);
-
     const table = new docx.Table({
       rows: [
         new docx.TableRow({
