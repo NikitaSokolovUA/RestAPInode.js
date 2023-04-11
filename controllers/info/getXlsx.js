@@ -11,7 +11,6 @@ export const getXlsx = async (req, res, next) => {
   try {
     const { type, number, address, registration_date, info } = req.results[0];
 
-    console.log(req.results[0]);
     const workbook = xlsx.utils.book_new();
 
     const data = [
@@ -28,9 +27,17 @@ export const getXlsx = async (req, res, next) => {
     const worksheet = xlsx.utils.json_to_sheet(data);
 
     xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    xlsx.writeFile(workbook, `${number.trim()}N2.xlsx`);
+    xlsx.writeFile(workbook, `./dist/${number.trim()}.xlsx`);
 
-    res.json({ answer: true });
+    const distDir = path.resolve(__dirname, "../..", "dist");
+    const filename = `${number.trim()}.xlsx`;
+
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.sendFile(filename, { root: distDir });
   } catch (e) {
     next(e);
   }
